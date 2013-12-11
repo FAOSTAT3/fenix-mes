@@ -1,0 +1,38 @@
+<div class="pageTitleCommands">
+    <h1>Methods & Standards</h1>
+    <div id='mesType'>
+        <input id='methodology_list' type='radio' checked='' value='methodology_list' name='radios' onclick='MES.loadUI("methodology_list");'>
+        <label id='methodology_label' for='methodology_list'><script>document.getElementById('methodology_label').innerHTML = $.i18n.prop('_methodology');</script></label>
+        |
+        <input id='classifications' type='radio' value='classifications' name='radios' onclick='MES.loadUI("classifications");'>
+        <label id='classifications_label' for='classifications'><script>document.getElementById('classifications_label').innerHTML = $.i18n.prop('_classifications');</script></label>
+        |
+        <input id='units' type='radio' value='units' name='radios' onclick='MES.loadUI("units");'>
+        <label id='units_label' for='units'><script>document.getElementById('units_label').innerHTML = $.i18n.prop('_units');</script></label>
+        |
+        <input id='local_currency' type='radio' value='local_currency' name='radios' onclick='MES.loadUI("local_currency");'>
+        <label id='local_currency_label' for='local_currency'><script>document.getElementById('local_currency_label').innerHTML = $.i18n.prop('_local_currency');</script></label>
+        |
+        <input id='glossary' type='radio' value='glossary' name='radios' onclick='MES.loadUI("glossary");'>
+        <label id='glossary_label' for='glossary'><script>document.getElementById('glossary_label').innerHTML = $.i18n.prop('_glossary');</script></label>
+        |
+        <input id='abbreviations' type='radio' value='abbreviations' name='radios' onclick='MES.loadUI("abbreviations");'>
+        <label id='abbreviations_label' for='abbreviations'><script>document.getElementById('abbreviations_label').innerHTML = $.i18n.prop('_abbreviations');</script></label>
+    </div>
+
+</div>
+<div id='main-content'>
+
+    <div id='selection_panel' class="mes-tree" style="width: 250px; border: none;   overflow:hidden; float:left; display:inline;"></div>
+    <div id='center_panel' style='margin-left:15px; overflow:hidden; float:left; display:inline; width: 690px;'>
+        <div id="content_panel"></div>
+        <div id="content_panel_export"></div>
+        <div id='content_panel_table'></div>
+    </div>
+    <div class='spacer-one'></div>
+</div>
+
+<form style='display: none;' id='exportMES' name='exportMES' method='GET' action='' target='_blank'>
+</form>
+
+

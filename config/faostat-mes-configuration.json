@@ -1,0 +1,4 @@
+{
+	"datasource": "faostat2",
+	"baseurl": "hqlprfenixapp1.hq.un.fao.org:42000"
+}
