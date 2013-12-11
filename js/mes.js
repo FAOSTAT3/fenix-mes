@@ -2,83 +2,48 @@ if (!window.MES) {
 
     window.MES = {
 
-        /**
-         * 'E' for English, 'F' for French or 'S' for Spanish
-         */
-        lang : 'E',
+        CONFIG : {
+            lang : 'E',
+            prefix : 'http://168.202.23.224:8085/mes/',
+            datasource : 'faostat2',
 
-        /*
-         This setting is used to integrate FAOSTAT M&S with the Gateway.
-         It can't be stored in the JSON configuration file because it is
-         used to locate the JSON configuration file.
-         */
-        prefix : 'http://168.202.23.17:8080/faostat-mes-js/',
+            baseurl: 'faostat3.fao.org',
 
-        /**
-         * e.g. FAOSTATPROD
-         */
-        datasource : '',
+            sectionCode: 'methodology_list',
+            subSectionCode: null,
+            subSectionLabel: null,
+            subSectionName: null,
 
-        /**
-         * e.g. localhost:8080
-         */
-        baseurl : '',
+            url_groupanddomains : '',
+            url_domain : '',
 
-        /**
-         * Custom FAOSTAT theme
-         */
-        theme : '',
+            theme : 'faostat',
+            html_structure: 'http://168.202.23.224:8085/mes/structure.html'
+        },
 
-        /**
-         * Used in the 'Classification' tab
-         */
-        selectedDomainCode : null,
-        selectedDomainLabel : null,
 
-        /**
-         * Used in the 'Classification' tab
-         */
-        selectedDomainName : null,
+        init : function(config) {
 
-        /**
-         * @param lang Language for the UI, it can be 'E' (default),
-         * 'F' or 'S'
-         *
-         * Read settings and initiate the module.
-         *
-         */
-        init : function(groupCode, domainCode, lang) {
+            /* Store user preferences. */
+            MES.CONFIG = $.extend(true, MES.CONFIG, config);
 
-            /**
-             * Language: as parameter or from the URL
-             */
-            if (lang != null && lang.length > 0) {
-                MES.lang = lang;
-            }
             var tmp = $.url().param('lang');
             if (tmp != null && tmp.length > 0)
                 MES.lang = tmp;
 
-            /**
-             * Read and store settings for web-services
-             */
-            $.getJSON(MES.prefix + 'config/faostat-mes-configuration.json', function(data) {
-                MES.datasource = data.datasource;
-                MES.baseurl = data.baseurl;
-            });
 
             /**
              * Initiate multi-language
              */
             var I18NLang = '';
-            switch (MES.lang) {
+            switch (MES.CONFIG.lang) {
                 case 'F' : I18NLang = 'fr'; break;
                 case 'S' : I18NLang = 'es'; break;
                 default: I18NLang = 'en'; break;
             }
             $.i18n.properties({
                 name: 'I18N',
-                path: MES.prefix + 'I18N/',
+                path: MES.CONFIG.prefix + 'I18N/',
                 mode: 'both',
                 language: I18NLang
             });
@@ -86,13 +51,13 @@ if (!window.MES) {
             /**
              * Load the structure in the 'container' DIV
              */
-            $('#container').load(MES.prefix + 'structure.html', function() {
+            $('#container').load(MES.CONFIG.html_structure, function() {
 //				MES.show('methodology_list');
-                if ( groupCode == 'classifications')
+                if ( MES.CONFIG.sectionCode == 'classifications')
                     MES.load_classifications();
                 else
-                    MES.show(groupCode);
-                document.getElementById(groupCode).checked = true;
+                    MES.show(MES.CONFIG.sectionCode);
+                document.getElementById(MES.CONFIG.sectionCode).checked = true;
             });
 
         },
@@ -114,7 +79,7 @@ if (!window.MES) {
             MS_STATS.show(code);
 
             if ( code != 'methodology' )
-                CORE.upgradeURL('mes', code, "*", MES.lang)
+                CORE.upgradeURL('mes', code, "*", MES.CONFIG.lang)
 
             /** Size for the left td */
             switch(code) {
@@ -143,7 +108,7 @@ if (!window.MES) {
             if (code == 'methodology_list') {
                 $.ajax({
                     type: 'GET',
-                    url: 'http://' + MES.baseurl + '/wds/rest/mes/' + code + '/json/' + MES.datasource + '/' + MES.selectedDomainCode + '/' + MES.lang,
+                    url: 'http://' + MES.CONFIG.baseurl + '/wds/rest/mes/' + code + '/json/' + MES.CONFIG.datasource + '/' + MES.CONFIG.subSectionCode + '/' + MES.CONFIG.lang,
                     success : function(response) {
                         MES.load_methodologies(response);
                     },
@@ -157,7 +122,7 @@ if (!window.MES) {
                 $.ajax({
 
                     type: 'GET',
-                    url: 'http://' + MES.baseurl + '/wds/rest/mes/' + code + '/html/' + MES.datasource + '/' + MES.selectedDomainCode + '/' + MES.lang,
+                    url: 'http://' + MES.CONFIG.baseurl + '/wds/rest/mes/' + code + '/html/' + MES.CONFIG.datasource + '/' + MES.CONFIG.subSectionCode + '/' + MES.CONFIG.lang,
 
                     success : function(response) {
 
@@ -176,22 +141,19 @@ if (!window.MES) {
                         var width = null;
                         switch(code) {
                             case 'classifications':
-                                MES.selectedDomainName = $.i18n.prop('_classifications');
+                                MES.CONFIG.selectedDomainName = $.i18n.prop('_classifications');
                                 break;
                             case 'methodology':
-                                MES.selectedDomainName = $.i18n.prop('_methodology_list');
+                                MES.CONFIG.selectedDomainName = $.i18n.prop('_methodology_list');
                                 break;
                             case 'abbreviations':
-//								width = '928px';
-                                MES.selectedDomainName = $.i18n.prop('_abbreviations_list');
+                                MES.CONFIG.selectedDomainName = $.i18n.prop('_abbreviations_list');
                                 break;
                             case 'glossary':
-//								width = '928px';
-                                MES.selectedDomainName = $.i18n.prop('_glossary_list');
+                                MES.CONFIG.selectedDomainName = $.i18n.prop('_glossary_list');
                                 break;
                             case 'units':
-//								width = '928px';
-                                MES.selectedDomainName = $.i18n.prop('_standard_units_and_symbols');
+                                MES.CONFIG.selectedDomainName = $.i18n.prop('_standard_units_and_symbols');
                                 break;
 
                         }
@@ -222,22 +184,15 @@ if (!window.MES) {
                             s += '</div>';
 
                             // format the content
-                            var t = '<div class="standard-title">' + MES.selectedDomainLabel +'</div>';
-//                            t += '<hr class="standard-hr">';
+                            var t = '<div class="standard-title">' + MES.CONFIG.subSectionLabel +'</div>';
                             document.getElementById('content_panel_table').innerHTML = t;
                             $('#content_panel_table').append(s);
 
                         } else {
 
-                            //  alert('here')
-
                             // add content
                             document.getElementById('content_panel_table').innerHTML = response;
-
-                            var s = '<div class="standard-title" style="float:left">' + MES.selectedDomainName.replace('<br>', ' ') + '</div>';
-                            /**s += '<img style="background-color:#000; margin-top:15px; cursor:pointer; float:right;" onclick="MES.export_excel(\'' + code + '\');" ' +
-                             'src="http://hqlprfenixapp1.hq.un.fao.org:42000/faostat-mes-js/images/export.png">' +
-                             '</div>';*/
+                            var s = '<div class="standard-title" style="float:left">' + MES.CONFIG.selectedDomainName.replace('<br>', ' ') + '</div>';
 
                             s += '<div id="export_icon" style="margin-top:15px;" class="obj-box-icon export-icon"></div>';
 
@@ -268,7 +223,7 @@ if (!window.MES) {
         },
 
         export_excel : function(code) {
-            var actionURL = 'http://' + MES.baseurl + '/wds/rest/mes/' + code + '/excel/' + MES.datasource + '/' + MES.selectedDomainCode + '/' + MES.lang;
+            var actionURL = 'http://' + MES.CONFIG.baseurl + '/wds/rest/mes/' + code + '/excel/' + MES.CONFIG.datasource + '/' + MES.CONFIG.subSectionCode + '/' + MES.CONFIG.lang;
             document.exportMES.action = actionURL;
             document.exportMES.submit();
             MS_STATS.download(code);
@@ -332,8 +287,8 @@ if (!window.MES) {
         },
 
         load_methodology : function(code, label) {
-            MES.selectedDomainCode = code;
-            MES.selectedDomainLabel = label;
+            MES.CONFIG.subSectionCode = code;
+            MES.CONFIG.subSectionLabel = label;
             MES.show('methodology');
         },
 
@@ -362,7 +317,7 @@ if (!window.MES) {
             $.ajax({
 
                 type: 'GET',
-                url: 'http://' + MES.baseurl + '/wds/rest/groupsanddomains/' + MES.datasource + '/' + MES.lang,
+                url: 'http://' + MES.CONFIG.baseurl + '/wds/rest/groupsanddomains/' + MES.CONFIG.datasource + '/' + MES.CONFIG.lang,
                 dataType: 'json',
 
                 success : function(response) {
@@ -390,8 +345,8 @@ if (!window.MES) {
                         var item = $('#mes-tree').jqxTree('getItem', args.element);
                         $('#mes-tree').jqxTree('expandItem', item.element);
                         if (item.parentElement != null && item.hasItems == false) {
-                            MES.selectedDomainCode = item.id;
-                            MES.selectedDomainName = item.label;
+                            MES.CONFIG.subSectionCode = item.id;
+                            MES.CONFIG.selectedDomainName = item.label;
                             MES.show('classifications');
                         }
                     });
@@ -420,7 +375,7 @@ if (!window.MES) {
                 $.ajax({
 
                     type: 'GET',
-                    url: 'http://' + MES.baseurl + '/wds/rest/domains/' + MES.datasource + '/' + domainCode + '/' + MES.language,
+                    url: 'http://' + MES.CONFIG.baseurl + '/wds/rest/domains/' + MES.CONFIG.datasource + '/' + domainCode + '/' + MES.CONFIG.language,
                     dataType: 'json',
                     success : function(response) {
 
@@ -444,12 +399,12 @@ if (!window.MES) {
 
                         }
 
-                        if (MES.selectedDomainCode != null) {
+                        if (MES.MES.CONFIG.subSectionCode != null) {
                             var found = false;
                             while (found == false) {
                                 if (item != null) {
                                     var tmp = item.nextItem;
-                                    if (tmp != null && tmp.value == MES.selectedDomainCode) {
+                                    if (tmp != null && tmp.value == MES.MES.CONFIG.subSectionCode) {
                                         found = true;
                                         $('#mes-tree').jqxTree('selectItem', tmp.element);
                                     } else {
@@ -518,14 +473,14 @@ if (!window.MES) {
         },
 
         buildGroup : function(data, startIDX) {
-            var groupCode = data[startIDX][0];
-            $('#root').append('<li id="' + groupCode + '">' + CORE.breakLabel(data[startIDX][1]));
-            $('#' + groupCode).append('<ul id ="' + groupCode + '_root">');
+            MES.CONFIG.sectionCode = data[startIDX][0];
+            $('#root').append('<li id="' + MES.CONFIG.sectionCode + '">' + CORE.breakLabel(data[startIDX][1]));
+            $('#' + MES.CONFIG.sectionCode).append('<ul id ="' + MES.CONFIG.sectionCode + '_root">');
             for (var i = startIDX ; i < data.length ; i++) {
-                if (data[i][0] == groupCode)
-                    $('#' + groupCode + '_root').append('<li id="' + data[i][2] + '">' + CORE.breakLabel(data[i][3]) + '</li>');
+                if (data[i][0] == MES.CONFIG.sectionCode)
+                    $('#' + MES.CONFIG.sectionCode + '_root').append('<li id="' + data[i][2] + '">' + CORE.breakLabel(data[i][3]) + '</li>');
             }
-            $('#' + groupCode).append('</ul>');
+            $('#' + MES.CONFIG.sectionCode).append('</ul>');
             $('#root').append('</li>');
         }
 
