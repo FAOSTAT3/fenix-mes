@@ -3,6 +3,7 @@ if (!window.MES) {
     window.MES = {
 
         CONFIG : {
+            placeholder : 'cointainer',
             lang : 'E',
             prefix : 'http://168.202.23.224:8085/mes/',
             datasource : 'faostat2',
@@ -51,7 +52,7 @@ if (!window.MES) {
             /**
              * Load the structure in the 'container' DIV
              */
-            $('#container').load(MES.CONFIG.html_structure, function() {
+            $('#' + MES.CONFIG.placeholder ).load(MES.CONFIG.html_structure, function() {
 //				MES.show('methodology_list');
                 if ( MES.CONFIG.sectionCode == 'classifications')
                     MES.load_classifications();
