@@ -5,7 +5,7 @@ if (!window.MES) {
         CONFIG : {
             placeholder : 'container',
             lang : 'E',
-            prefix : 'http://168.202.23.224:8085/mes/',
+            prefix : 'http://faostat3.fao.org/mes/',
             datasource : 'faostat2',
 
             baseurl: 'faostat3.fao.org',
@@ -19,7 +19,7 @@ if (!window.MES) {
             url_domain : '',
 
             theme : 'faostat',
-            html_structure: 'http://168.202.23.224:8085/mes/structure.html'
+            html_structure: 'http://faostat3.fao.org/mes/structure.html'
         },
 
 
@@ -30,7 +30,7 @@ if (!window.MES) {
 
             var tmp = $.url().param('lang');
             if (tmp != null && tmp.length > 0)
-                MES.lang = tmp;
+                MES.CONFIG.language = tmp;
 
 
             /**
@@ -53,8 +53,6 @@ if (!window.MES) {
              * Load the structure in the 'container' DIV
              */
             $('#' + MES.CONFIG.placeholder ).load(MES.CONFIG.html_structure, function() {
-//				MES.show('methodology_list');
-                console.log();
                 if ( MES.CONFIG.sectionCode == 'classifications')
                     MES.load_classifications();
                 else
@@ -298,7 +296,7 @@ if (!window.MES) {
 
             MS_STATS.show('classifications');
 
-            CORE.upgradeURL('mes', 'classifications', "*", MES.lang)
+            CORE.upgradeURL('mes', 'classifications', "*", MES.CONFIG.lang)
             $('#selection_panel').show();
             $('#center_panel').css('width', '690px');
 
