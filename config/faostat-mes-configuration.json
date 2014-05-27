@@ -1,4 +1,6 @@
 {
 	"datasource": "faostat2",
-	"baseurl": "hqlprfenixapp1.hq.un.fao.org:42000"
+	"baseurl": "faostat3.fao.org",
+    "I18N_URL" :  "http://168.202.28.214:8080/faostat-gateway/static/faostat/I18N/"
+
 }

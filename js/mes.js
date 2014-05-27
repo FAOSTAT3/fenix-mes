@@ -3,10 +3,10 @@ if (!window.MES) {
     window.MES = {
 
         CONFIG : {
-            placeholder : 'container',
-            lang : 'E',
-            prefix : 'http://faostat3.fao.org/mes/',
-            datasource : 'faostat2',
+            placeholder: 'container',
+            lang: 'E',
+            prefix: 'http://168.202.28.214:8080/mes/',
+            datasource: 'faostat2',
 
             baseurl: 'faostat3.fao.org',
 
@@ -15,11 +15,12 @@ if (!window.MES) {
             subSectionLabel: null,
             subSectionName: null,
 
-            url_groupanddomains : '',
-            url_domain : '',
+            url_groupanddomains: '',
+            url_domain: '',
 
-            theme : 'faostat',
-            html_structure: 'http://faostat3.fao.org/mes/structure.html'
+            theme: 'faostat',
+            html_structure: 'http://168.202.28.214:8080/mes/structure.html',
+            I18N_URL: 'http://168.202.28.214:8080/faostat-gateway/static/faostat/I18N/'
         },
 
 
@@ -44,22 +45,22 @@ if (!window.MES) {
             }
             $.i18n.properties({
                 name: 'I18N',
-                path: MES.CONFIG.prefix + 'I18N/',
+                path: MES.CONFIG.I18N_URL,
                 mode: 'both',
-                language: I18NLang
+                language: I18NLang,
+                callback: function() {
+                    /**
+                     * Load the structure in the 'container' DIV
+                     */
+                    $('#' + MES.CONFIG.placeholder ).load(MES.CONFIG.html_structure, function() {
+                        if ( MES.CONFIG.sectionCode == 'classifications')
+                            MES.load_classifications();
+                        else
+                            MES.show(MES.CONFIG.sectionCode);
+                        document.getElementById(MES.CONFIG.sectionCode).checked = true;
+                    });
+                }
             });
-
-            /**
-             * Load the structure in the 'container' DIV
-             */
-            $('#' + MES.CONFIG.placeholder ).load(MES.CONFIG.html_structure, function() {
-                if ( MES.CONFIG.sectionCode == 'classifications')
-                    MES.load_classifications();
-                else
-                    MES.show(MES.CONFIG.sectionCode);
-                document.getElementById(MES.CONFIG.sectionCode).checked = true;
-            });
-
         },
 
         /**
