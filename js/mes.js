@@ -29,10 +29,6 @@ if (!window.MES) {
             /* Store user preferences. */
             MES.CONFIG = $.extend(true, MES.CONFIG, config);
 
-            var tmp = $.url().param('lang');
-            if (tmp != null && tmp.length > 0)
-                MES.CONFIG.language = tmp;
-
 
             /**
              * Initiate multi-language
