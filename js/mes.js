@@ -5,7 +5,8 @@ if (!window.MES) {
         CONFIG : {
             placeholder: 'container',
             lang: 'E',
-            prefix: 'http://168.202.28.214:8080/mes/',
+            module: 'mes',
+            prefix: 'http://168.202.28.214:8080/faostat-mes/',
             datasource: 'faostat2',
 
             baseurl: 'faostat3.fao.org',
@@ -76,7 +77,7 @@ if (!window.MES) {
             MS_STATS.show(code);
 
             if ( code != 'methodology' )
-                CORE.upgradeURL('mes', code, "*", MES.CONFIG.lang)
+                CORE.upgradeURL(MES.CONFIG.module, code, null, MES.CONFIG.lang)
 
             /** Size for the left td */
             switch(code) {
@@ -293,7 +294,7 @@ if (!window.MES) {
 
             MS_STATS.show('classifications');
 
-            CORE.upgradeURL('mes', 'classifications', "*", MES.CONFIG.lang)
+            CORE.upgradeURL(MES.CONFIG.module, 'classifications', null, MES.CONFIG.lang)
             $('#selection_panel').show();
             $('#center_panel').css('width', '690px');
 
