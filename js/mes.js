@@ -249,7 +249,7 @@ if (!window.MES) {
              * Something's wrong with the display of labels, so I had to fill the list
              * with labels only, I'll do the query based on that...
              */
-            for (var i = 1 ; i < payload.length ; i++) {
+            for (var i = 0 ; i < payload.length ; i++) {
                 var row = {};
                 row['code'] = payload[i][1];
                 row['label'] = payload[i][1];
@@ -266,7 +266,7 @@ if (!window.MES) {
             var s = '<div class="standard-title">'+ $.i18n.prop("_methodology") + '</div>';
             s += '<hr class="standard-hr">';
             s +='<div class="methodology"><ul>';
-            for (var i = 1 ; i < payload.length ; i++) {
+            for (var i = 0 ; i < payload.length ; i++) {
                 s += '<li id="met_' +payload[i][0] +'">' + CORE.breakLabelList(payload[i][1], 50) +' </li>';
             }
             s += '</ul></div>';
@@ -276,7 +276,7 @@ if (!window.MES) {
             document.getElementById('content_panel_table').innerHTML = title;
 
 
-            for (var i = 1 ; i < payload.length ; i++) {
+            for (var i = 0 ; i < payload.length ; i++) {
                 $("#met_" + payload[i][0]).click({code: payload[i][0], label: payload[i][1]}, function(event) {
                     MES.load_methodology(event.data.code, event.data.label);
                 });
@@ -379,7 +379,7 @@ if (!window.MES) {
 
                         var ord = new Array();
 
-                        for (var i = 1 ; i < response.length ; i++) {
+                        for (var i = 0 ; i < response.length ; i++) {
 
                             if ($.inArray(response[i][0], ord) < 0) {
 
