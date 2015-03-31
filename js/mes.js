@@ -21,7 +21,9 @@ if (!window.MES) {
 
             theme: 'faostat',
             html_structure: 'http://168.202.28.214:8080/mes/structure.html',
-            I18N_URL: 'http://168.202.28.214:8080/faostat-gateway/static/faostat/I18N/'
+            I18N_URL: 'http://168.202.28.214:8080/faostat-gateway/static/faostat/I18N/',
+
+            url_wds: 'http://faostat3.fao.org/wds'
         },
 
 
@@ -161,30 +163,49 @@ if (!window.MES) {
                          */
                         if (code == 'methodology') {
 
-                            // Headers
-                            var headers = [];
-                            headers.push($.i18n.prop('_note'));
-                            headers.push($.i18n.prop('_coverage'));
-                            headers.push($.i18n.prop('_reference'));
-                            headers.push($.i18n.prop('_collection'));
-                            headers.push($.i18n.prop('_estimation'));
+                            var query = "SELECT M.MethodologyNote" + MES.CONFIG.lang + ", M.MethodologyCoverage" + MES.CONFIG.lang + ", M.MethodologyReferences" + MES.CONFIG.lang + ", M.MethodologyCollection" + MES.CONFIG.lang + ", M.MethodologyEstimation" + MES.CONFIG.lang + " " +
+                                "FROM Metadata_Methodology AS M " +
+                                "WHERE M.MethodologyCode = '" + MES.CONFIG.subSectionCode + "'";
+                            query = query.replace(/\n/g, ' ');
 
-                            // get the table
-                            var s = '';
-                            var html = document.createElement('div');
-                            var counter = 0;
-                            html.innerHTML = response;
-                            s += '<div class="obj-box">';
-                            $('td', html).each(function(k, v) {
-                                s += '<div class="mes-subtitle">' + headers[counter++] + '</div>';
-                                s += '<div class="mes-text-box">' + v.innerHTML + '</div>';
+                            var data = {};
+                            var sql = {};
+
+                            sql.limit = null;
+                            sql.query = query;
+                            sql.frequency = "NONE";
+                            data.datasource = MES.CONFIG.datasource;
+                            data.json = JSON.stringify(sql);
+
+                            var _this = this;
+                            //console.log(data);
+                            $.ajax({
+                                type : 'POST',
+                                url : MES.CONFIG.url_wds + '/rest/table/json',
+                                data : data,
+                                success : function(response) {
+                                    // Headers
+                                    var headers = [];
+                                    headers.push($.i18n.prop('_note'));
+                                    headers.push($.i18n.prop('_coverage'));
+                                    headers.push($.i18n.prop('_reference'));
+                                    headers.push($.i18n.prop('_collection'));
+                                    headers.push($.i18n.prop('_estimation'));
+
+                                    var s = '<div class="standard-title">' + MES.CONFIG.subSectionLabel +'</div>';
+                                    s += '<div class="obj-box">';
+                                    for (var i=0; i < response[0].length; i++) {
+                                        if (response[0][i] != '') {
+                                            s += '<div class="mes-subtitle">' + headers[i] + '</div>';
+                                            s += '<div class="mes-text-box">' + response[0][i] + '</div>';
+                                        }
+                                    }
+                                    s += '</div>';
+                                    $('#content_panel_table').html(s);
+                                },
+                                error : function(err, b, c) { }
                             });
-                            s += '</div>';
 
-                            // format the content
-                            var t = '<div class="standard-title">' + MES.CONFIG.subSectionLabel +'</div>';
-                            document.getElementById('content_panel_table').innerHTML = t;
-                            $('#content_panel_table').append(s);
 
                         } else {
 
